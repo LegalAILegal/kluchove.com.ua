@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ТОВ «КЛЮЧОВЕ РІШЕННЯ» — Реквізити для оплати</title>
+    <meta name="description" content="Реквізити для оплати орендної плати ТОВ «КЛЮЧОВЕ РІШЕННЯ»">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blue-50: #eff6ff;
+            --blue-100: #dbeafe;
+            --blue-200: #bfdbfe;
+            --blue-300: #93c5fd;
+            --blue-400: #60a5fa;
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-800: #1e40af;
+            --blue-900: #1e3a5f;
+            --text: #1e293b;
+            --text-light: #475569;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--blue-50) 0%, var(--white) 50%, var(--blue-50) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--blue-700) 0%, var(--blue-500) 100%);
+            padding: 3rem 1.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 60%);
+            animation: shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(5%, 5%); }
+        }
+
+        .header h1 {
+            font-size: clamp(1.5rem, 4vw, 2.25rem);
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 0.02em;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-top: 0.5rem;
+        }
+
+        .intro .greeting {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--blue-700);
+            margin-bottom: 0.75rem;
+        }
+
+        .intro p {
+            font-size: 1rem;
+            color: var(--text-light);
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 24px rgba(37,99,235,0.08);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--blue-100);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--blue-800);
+            text-align: center;
+            margin-bottom: 1.75rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--blue-100);
+        }
+
+        .field {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.875rem 0;
+            border-bottom: 1px solid var(--blue-50);
+        }
+
+        .field:last-child {
+            border-bottom: none;
+        }
+
+        .field-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            font-weight: 500;
+            flex-shrink: 0;
+            min-width: 140px;
+        }
+
+        .field-value {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text);
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .copy-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--blue-200);
+            border-radius: 8px;
+            background: var(--blue-50);
+            color: var(--blue-600);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background: var(--blue-100);
+            border-color: var(--blue-300);
+            transform: scale(1.05);
+        }
+
+        .copy-btn:active {
+            transform: scale(0.95);
+        }
+
+        .copy-btn.copied {
+            background: #dcfce7;
+            border-color: #86efac;
+            color: #16a34a;
+        }
+
+        .copy-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .important-card {
+            background: linear-gradient(135deg, var(--blue-600) 0%, var(--blue-700) 100%);
+            color: var(--white);
+            border: none;
+            box-shadow: 0 4px 16px rgba(37,99,235,0.25);
+        }
+
+        .important-card .card-title {
+            color: var(--white);
+            border-bottom-color: rgba(255,255,255,0.2);
+            font-size: 1.375rem;
+        }
+
+        .important-card p {
+            font-size: 0.9375rem;
+            line-height: 1.7;
+            opacity: 0.95;
+        }
+
+        .important-card ul {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .important-card ul li {
+            position: relative;
+            padding-left: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9375rem;
+        }
+
+        .important-card ul li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: var(--blue-300);
+        }
+
+        .example {
+            background: rgba(255,255,255,0.12);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+            font-size: 0.875rem;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .example-label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.35rem;
+            color: var(--blue-200);
+            font-size: 0.8125rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .notice {
+            margin-top: 1.25rem;
+            font-size: 0.9375rem;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .note-card {
+            background: var(--blue-50);
+            border: 1px solid var(--blue-200);
+        }
+
+        .note-card .card-title {
+            color: var(--blue-700);
+            font-size: 1.125rem;
+        }
+
+        .note-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.625rem 0;
+        }
+
+        .note-item:not(:last-child) {
+            border-bottom: 1px solid var(--blue-100);
+        }
+
+        .note-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            color: var(--blue-500);
+            margin-top: 1px;
+        }
+
+        .note-item p {
+            font-size: 0.9375rem;
+            color: var(--text-light);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            font-size: 0.8125rem;
+            color: var(--text-light);
+            opacity: 0.7;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--blue-800);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 640px) {
+            .header {
+                padding: 2rem 1rem;
+            }
+
+            .container {
+                padding: 1.25rem 1rem 3rem;
+            }
+
+            .card {
+                padding: 1.5rem 1.25rem;
+            }
+
+            .field {
+                flex-direction: column;
+                gap: 0.35rem;
+            }
+
+            .field-value {
+                text-align: left;
+                justify-content: flex-start;
+            }
+
+            .field-label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <h1>ТОВ &laquo;КЛЮЧОВЕ РІШЕННЯ&raquo;</h1>
+</header>
+
+<main class="container">
+    <section class="intro">
+        <p class="greeting">Шановні орендарі!</p>
+        <p>На цій сторінці ви знайдете реквізити для оплати орендної плати за нерухомість, у якій ви проживаєте, а також для погашення заборгованості (за наявності).</p>
+    </section>
+
+    <div class="card">
+        <h2 class="card-title">Реквізити для оплати</h2>
+
+        <div class="field">
+            <span class="field-label">Отримувач</span>
+            <span class="field-value">
+                <span data-copy>ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «КЛЮЧОВЕ РІШЕННЯ»</span>
+                <button class="copy-btn" onclick="copyText(this)" aria-label="Скопіювати">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                </button>
+            </span>
+        </div>
+
+        <div class="field">
+            <span class="field-label">Код ЄДРПОУ</span>
+            <span class="field-value">
+                <span data-copy>34410967</span>
+                <button class="copy-btn" onclick="copyText(this)" aria-label="Скопіювати">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                </button>
+            </span>
+        </div>
+
+        <div class="field">
+            <span class="field-label">IBAN</span>
+            <span class="field-value">
+                <span data-copy>UA763077700000026000010023004</span>
+                <button class="copy-btn" onclick="copyText(this)" aria-label="Скопіювати">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                </button>
+            </span>
+        </div>
+
+        <div class="field">
+            <span class="field-label">Банк отримувача</span>
+            <span class="field-value">
+                <span data-copy>АТ «Акцент Банк»</span>
+                <button class="copy-btn" onclick="copyText(this)" aria-label="Скопіювати">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                </button>
+            </span>
+        </div>
+
+        <div class="field">
+            <span class="field-label">МФО</span>
+            <span class="field-value">
+                <span data-copy>307770</span>
+                <button class="copy-btn" onclick="copyText(this)" aria-label="Скопіювати">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                </button>
+            </span>
+        </div>
+    </div>
+
+    <div class="card important-card">
+        <h2 class="card-title">Важливо!</h2>
+        <p>У призначенні платежу обов'язково вкажіть:</p>
+        <ul>
+            <li>адресу об'єкту нерухомості</li>
+            <li>прізвище, ім'я, по батькові платника</li>
+        </ul>
+        <div class="example">
+            <span class="example-label">Приклад</span>
+            м. Дніпро, вул. Центральна, буд. 10, кв. 5, Іваненко Іван Іванович
+        </div>
+        <p class="notice">Просимо уважно перевіряти реквізити перед здійсненням платежу.</p>
+    </div>
+
+    <div class="card note-card">
+        <h2 class="card-title">Зверніть увагу!</h2>
+
+        <div class="note-item">
+            <svg class="note-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            <p>Оплата зараховується протягом 1–3 банківських днів</p>
+        </div>
+
+        <div class="note-item">
+            <svg class="note-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <p>У разі неправильного заповнення призначення платежу зарахування може бути ускладнене</p>
+        </div>
+
+        <div class="note-item">
+            <svg class="note-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            <p>Зберігайте квитанцію до моменту підтвердження оплати</p>
+        </div>
+    </div>
+</main>
+
+<footer class="footer">
+    &copy; 2025 ТОВ &laquo;КЛЮЧОВЕ РІШЕННЯ&raquo;
+</footer>
+
+<div class="toast" id="toast">Скопійовано!</div>
+
+<script>
+    function copyText(btn) {
+        const text = btn.parentElement.querySelector('[data-copy]').textContent.trim();
+        navigator.clipboard.writeText(text).then(() => {
+            btn.classList.add('copied');
+            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg>';
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 1500);
+            setTimeout(() => {
+                btn.classList.remove('copied');
+                btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+            }, 2000);
+        });
+    }
+</script>
+
+</body>
+</html>
