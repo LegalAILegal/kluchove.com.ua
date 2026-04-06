@@ -7,571 +7,546 @@
     <meta name="description" content="Реквізити для оплати орендної плати ТОВ «КЛЮЧОВЕ РІШЕННЯ»">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Premium Font: Manrope -->
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        /* CSS Reset & Basics */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         
+        /* Theming Constants */
         :root {
-            --sky-50: #f0f9ff;
-            --sky-100: #e0f2fe;
-            --sky-200: #bae6fd;
-            --sky-300: #7dd3fc;
-            --sky-400: #38bdf8;
-            --sky-500: #0ea5e9;
-            --sky-600: #0284c7;
-            --blue-800: #1e40af;
+            /* Light Theme (Azure/Sky) */
+            --bg-base: #f0f9ff;
+            --bg-accent: #e0f2fe;
             --text-main: #0f172a;
             --text-muted: #475569;
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.8);
-            --glass-shadow: 0 8px 32px rgba(14, 165, 233, 0.15);
+            --text-invert: #ffffff;
+            --primary: #0ea5e9;
+            --primary-hover: #0284c7;
+            
+            --card-bg: rgba(255, 255, 255, 0.7);
+            --card-border: rgba(255, 255, 255, 0.8);
+            --card-shadow: 0 12px 32px rgba(14, 165, 233, 0.08);
+            
+            --important-bg: linear-gradient(135deg, #0284c7, #38bdf8);
+            --item-bg: rgba(255, 255, 255, 0.5);
+            --item-hover: rgba(255, 255, 255, 0.9);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                /* Dark Theme (Deep Sapphire) */
+                --bg-base: #020617;
+                --bg-accent: #0f172a;
+                --text-main: #f8fafc;
+                --text-muted: #94a3b8;
+                --text-invert: #ffffff;
+                --primary: #38bdf8;
+                --primary-hover: #0ea5e9;
+                
+                --card-bg: rgba(30, 41, 59, 0.6);
+                --card-border: rgba(255, 255, 255, 0.08);
+                --card-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+                
+                --important-bg: linear-gradient(135deg, #0ea5e9, #0284c7);
+                --item-bg: rgba(15, 23, 42, 0.5);
+                --item-hover: rgba(51, 65, 85, 0.8);
+            }
         }
 
         body {
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Manrope', system-ui, sans-serif;
             color: var(--text-main);
-            background: #e0f2fe;
+            background: var(--bg-base);
             min-height: 100vh;
-            /* Using grid to place items centrally */
-            display: grid;
-            place-items: center;
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        /* Animated Background Blobs */
-        .bg-blobs {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100%;
-            z-index: -1;
-            overflow: hidden;
-            background: linear-gradient(135deg, var(--sky-50) 0%, #ffffff 100%);
-        }
-        
-        .blob {
-            position: absolute;
-            filter: blur(80px);
-            opacity: 0.6;
-            animation: float 20s infinite ease-in-out alternate;
-        }
-
-        .blob-1 {
-            width: 50vw; height: 50vw;
-            background: var(--sky-200);
-            top: -10%; left: -10%;
-            animation-delay: 0s;
-        }
-
-        .blob-2 {
-            width: 40vw; height: 40vw;
-            background: #cbfbfe;
-            bottom: -10%; right: -10%;
-            animation-delay: -5s;
-        }
-
-        .blob-3 {
-            width: 30vw; height: 30vw;
-            background: var(--sky-300);
-            top: 40%; left: 50%;
-            transform: translate(-50%, -50%);
-            animation-delay: -10s;
-            opacity: 0.4;
-        }
-
-        @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(5%, 10%) scale(1.1); }
-            66% { transform: translate(-5%, 5%) scale(0.9); }
-            100% { transform: translate(0%, -5%) scale(1.05); }
-        }
-
-        /* Layout Container */
-        .main-wrapper {
-            width: 100%;
-            max-width: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 2vh 2vw;
-            /* CSS Grid for Layout */
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            grid-template-rows: auto 1fr auto;
-            gap: 1.5rem;
-            min-height: 96vh;
-            /* Intro animations */
+            position: relative;
+            line-height: 1.5;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Subtle Noise Texture for Premium Material feel */
+        .noise {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opactiy='0.05'/%3E%3C/svg%3E");
+        }
+
+        /* Soft Background Glows */
+        .glow {
+            position: fixed;
+            width: 40vw; height: 40vw;
+            border-radius: 50%;
+            background: var(--primary);
+            filter: blur(120px);
+            z-index: -2;
+            opacity: 0.15;
+            animation: pulse 12s ease-in-out infinite alternate;
+        }
+        .glow-1 { top: -10%; left: -10%; }
+        .glow-2 { bottom: -20%; right: -10%; animation-delay: -5s; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.1; }
+            100% { transform: scale(1.1); opacity: 0.2; }
+        }
+
+        /* ----- Bento Grid Layout ----- */
+        .wrapper {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
             opacity: 0;
-            animation: fadeIn 0.8s ease-out forwards;
+            animation: fadeIn 0.8s 0.2s forwards;
         }
 
-        @keyframes fadeIn {
-            to { opacity: 1; }
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
         }
 
-        /* Header */
-        .header {
-            grid-column: 1 / -1;
+        .header-cell {
+            grid-column: span 3;
             text-align: center;
-            padding: 1rem 0;
+            padding: 1.5rem 0 0.5rem;
         }
 
-        .header h1 {
-            font-size: clamp(1.8rem, 3vw, 2.5rem);
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--text-main) 0%, var(--sky-600) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.03em;
+        .header-cell h1 {
+            font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
             margin-bottom: 0.5rem;
         }
 
-        .header p {
+        .header-cell p {
             color: var(--text-muted);
-            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
-            font-weight: 400;
-            max-width: 600px;
-            margin: 0 auto;
+            font-weight: 500;
         }
 
-        /* Glass Cards */
-        .glass-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
+        /* Bento Cards */
+        .bento-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 24px;
-            padding: 2rem;
-            box-shadow: var(--glass-shadow);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            /* 3D context */
+            padding: 1.75rem;
+            box-shadow: var(--card-shadow);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            display: flex;
+            flex-direction: column;
             transform-style: preserve-3d;
-            position: relative;
-            z-index: 1;
         }
 
-        /* Typography & Decor */
+        /* Grid Placement */
+        .main-req { grid-column: span 2; }
+        .bank-req { grid-column: span 1; justify-content: center; align-items: center; text-align: center; }
+        .important-info { grid-column: span 2; background: var(--important-bg); color: var(--text-invert); }
+        .notes-info { grid-column: span 1; }
+
         .card-title {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            color: var(--sky-600);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
+            color: var(--primary);
             display: flex;
             align-items: center;
-            gap: 0.75rem;
+            gap: 0.5rem;
             transform: translateZ(20px);
         }
 
-        .card-title::before {
-            content: '';
-            display: block;
-            width: 8px;
-            height: 24px;
-            background: var(--sky-500);
-            border-radius: 4px;
-        }
-
-        /* Requisites List */
-        .requisites-grid {
-            transform: translateZ(30px);
+        .important-info .card-title { color: var(--text-invert); }
+        
+        /* Requisites Row (Key-Value) */
+        .req-list {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.5rem;
+            transform: translateZ(30px);
         }
 
-        .req-item {
+        .req-row {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 0.8rem 1rem;
-            background: rgba(255, 255, 255, 0.4);
+            justify-content: space-between;
+            padding: 0.6rem 1rem;
+            background: var(--item-bg);
             border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            transition: transform 0.2s, background 0.2s;
+            border: 1px solid transparent;
+            transition: all 0.3s;
         }
 
-        .req-item:hover {
-            background: rgba(255, 255, 255, 0.8);
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        .req-row:hover {
+            background: var(--item-hover);
+            border-color: var(--card-border);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         .req-label {
             font-size: 0.85rem;
+            font-weight: 600;
             color: var(--text-muted);
-            font-weight: 500;
-            width: 35%;
+            width: 30%;
         }
 
-        .req-value-wrapper {
+        .important-info .example-box {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 1rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            transform: translateZ(40px);
+            margin-top: 0.5rem;
+        }
+
+        /* Interactive Typography */
+        .req-value-box {
             display: flex;
             align-items: center;
+            gap: 0.75rem;
             justify-content: flex-end;
-            gap: 0.5rem;
-            width: 65%;
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--text-main);
-            text-align: right;
+            width: 70%;
         }
 
         .req-value {
-            word-break: break-word;
+            font-family: 'Manrope', monospace;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
+            word-break: break-all;
+            text-align: right;
         }
 
-        /* Copy Button */
-        .btn-copy {
-            background: var(--sky-100);
+        .req-value.large {
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        /* Magnetic Button Glow */
+        .copy-btn {
+            background: var(--primary);
+            color: white;
             border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            color: var(--sky-600);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
             flex-shrink: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            outline: none;
+            box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
         }
 
-        .btn-copy:hover {
-            background: var(--sky-500);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 10px rgba(14, 165, 233, 0.3);
+        .copy-btn:hover, .copy-btn:focus-visible {
+            transform: scale(1.1);
+            box-shadow: 0 6px 14px rgba(14, 165, 233, 0.4);
+            background: var(--primary-hover);
         }
 
-        .btn-copy:active {
-            transform: scale(0.9);
-        }
+        .copy-btn:active { transform: scale(0.95); }
+        .copy-btn svg { width: 16px; height: 16px; }
 
-        .btn-copy svg { width: 18px; height: 18px; }
-
-        /* Secondary Grid Area */
-        .secondary-area {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        /* Important Info */
-        .info-card {
-            background: linear-gradient(135deg, var(--sky-600), var(--sky-400));
-            border: none;
-            color: white;
-            box-shadow: 0 12px 32px rgba(2, 132, 199, 0.3);
-        }
-
-        .info-card .card-title {
-            color: white;
-            transform: translateZ(20px);
+        /* Bank Specific Styles (Trust Signal) */
+        .bank-logo-placeholder {
+            width: 64px; height: 64px;
+            background: var(--item-bg);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            border: 1px solid var(--card-border);
+            transform: translateZ(40px);
         }
         
-        .info-card .card-title::before {
-            background: rgba(255,255,255,0.8);
-        }
-
-        .info-list {
+        .bank-name {
+            font-size: 1.2rem;
+            font-weight: 800;
             transform: translateZ(30px);
-            list-style: none;
-            margin: 1rem 0;
+            margin-bottom: 0.2rem;
         }
 
-        .info-list li {
-            position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 0.75rem;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            font-weight: 500;
-        }
-
-        .info-list li::before {
-            content: '';
-            position: absolute;
-            left: 0; top: 8px;
-            width: 6px; height: 6px;
-            background: white;
-            border-radius: 50%;
-        }
-
-        .example-box {
-            transform: translateZ(40px);
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 1.25rem;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            backdrop-filter: blur(5px);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        .example-label {
-            display: block;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            opacity: 0.8;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Notes Area */
-        .notes-card {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .notes-list {
-            transform: translateZ(25px);
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-            justify-content: center;
-            flex-grow: 1;
-        }
-
-        .note-item {
-            display: flex;
-            gap: 1rem;
-            align-items: flex-start;
-        }
-
-        .note-icon {
-            width: 24px; height: 24px;
-            color: var(--sky-500);
-            flex-shrink: 0;
-            background: var(--sky-100);
-            border-radius: 50%;
-            padding: 4px;
-        }
-
-        .note-item p {
+        .mfo-code {
             font-size: 0.9rem;
             color: var(--text-muted);
-            line-height: 1.5;
+            font-weight: 600;
+            transform: translateZ(20px);
+            margin-bottom: 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        /* Important & Notes List */
+        ul.bullet-list {
+            list-style: none;
+            transform: translateZ(30px);
+        }
+        ul.bullet-list li {
+            position: relative;
+            padding-left: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        ul.bullet-list li::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 7px;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+        ul.bullet-list.notes li {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+        ul.bullet-list.notes li::before {
+            background: var(--primary);
         }
 
         /* Footer */
         .footer {
-            grid-column: 1 / -1;
             text-align: center;
+            padding: 1rem 0;
             font-size: 0.85rem;
+            font-weight: 600;
             color: var(--text-muted);
-            padding-top: 1rem;
         }
 
         /* Toast */
         .toast {
             position: fixed;
-            bottom: 30px;
-            left: 50%;
+            bottom: 30px; left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: var(--text-main);
-            color: white;
+            color: var(--bg-base);
             padding: 0.8rem 1.5rem;
             border-radius: 30px;
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 0.9rem; font-weight: 700;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 1000;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            display: flex; align-items: center; gap: 0.5rem;
             opacity: 0;
         }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 960px) {
-            .main-wrapper {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto auto auto auto;
-                height: auto;
-                min-height: 100vh;
-                padding: 1rem;
-            }
-            body { align-items: start; display: block; overflow-y: auto; }
-            .header { padding-top: 2rem; }
-            
-            /* Disable aggressive 3D hover on mobile */
-            .glass-card { transform: none !important; }
-        }
-
-        @media (max-width: 480px) {
-            .req-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
+        /* Mobile Adjustments */
+        @media (max-width: 900px) {
+            .bento-grid { display: flex; flex-direction: column; }
+            .bento-card { transform: none !important; } /* Disable 3D tilt */
+            .req-row { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
             .req-label { width: 100%; }
-            .req-value-wrapper { width: 100%; justify-content: space-between; flex-direction: row-reverse; }
+            .req-value-box { width: 100%; justify-content: space-between; flex-direction: row-reverse; }
             .req-value { text-align: left; flex-grow: 1; }
+        }
+
+        /* ----- Print Perfection Mode ----- */
+        @media print {
+            body { 
+                background: white !important; 
+                color: black !important;
+                display: block;
+                padding: 0;
+            }
+            .noise, .glow, .copy-btn, .toast, .footer { display: none !important; }
+            .bento-grid { display: block; }
+            .bento-card {
+                background: transparent !important;
+                border: 1px solid #000 !important;
+                box-shadow: none !important;
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+                margin-bottom: 1.5rem;
+                page-break-inside: avoid;
+                color: black !important;
+                padding: 1.5rem;
+                border-radius: 0;
+            }
+            .req-row { background: transparent !important; border: 1px solid #ccc !important; }
+            .card-title, .req-label, .req-value, .bank-name { color: block !important; }
+            .important-info { color: block !important; border: 2px solid black !important; }
+            .important-info .card-title { color: black !important; }
+            h1 { color: black !important; text-align: center; margin-top: 1cm; }
+            * { transform: none !important; } /* Kill 3D layers */
         }
     </style>
 </head>
 <body>
 
-    <!-- Animated Background -->
-    <div class="bg-blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
-    </div>
+    <!-- Premium Textures & Glows -->
+    <div class="noise"></div>
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
 
-    <!-- Main Content Grid -->
-    <main class="main-wrapper">
-        
-        <header class="header">
-            <h1>ТОВ &laquo;КЛЮЧОВЕ РІШЕННЯ&raquo;</h1>
-            <p>Шановні орендарі, нижче наведені реквізити для оплати оренди та погашення заборгованості.</p>
-        </header>
-
-        <!-- Left Column: Requisites -->
-        <section class="glass-card" data-tilt data-tilt-max="3" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
-            <h2 class="card-title">Реквізити для оплати</h2>
-
-            <div class="requisites-grid">
-                <div class="req-item">
-                    <span class="req-label">Отримувач</span>
-                    <div class="req-value-wrapper">
-                        <button class="btn-copy" onclick="copyValue(this)" aria-label="Копіювати">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        </button>
-                        <span class="req-value" data-copy>ТОВ «КЛЮЧОВЕ РІШЕННЯ»</span>
-                    </div>
-                </div>
-
-                <div class="req-item">
-                    <span class="req-label">Код ЄДРПОУ</span>
-                    <div class="req-value-wrapper">
-                        <button class="btn-copy" onclick="copyValue(this)" aria-label="Копіювати">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        </button>
-                        <span class="req-value" data-copy>34410967</span>
-                    </div>
-                </div>
-
-                <div class="req-item">
-                    <span class="req-label">IBAN</span>
-                    <div class="req-value-wrapper">
-                        <button class="btn-copy" onclick="copyValue(this)" aria-label="Копіювати">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        </button>
-                        <span class="req-value" data-copy>UA763077700000026000010023004</span>
-                    </div>
-                </div>
-
-                <div class="req-item">
-                    <span class="req-label">Банк отримувача</span>
-                    <div class="req-value-wrapper">
-                        <button class="btn-copy" onclick="copyValue(this)" aria-label="Копіювати">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        </button>
-                        <span class="req-value" data-copy>АТ «Акцент Банк»</span>
-                    </div>
-                </div>
-
-                <div class="req-item">
-                    <span class="req-label">МФО</span>
-                    <div class="req-value-wrapper">
-                        <button class="btn-copy" onclick="copyValue(this)" aria-label="Копіювати">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        </button>
-                        <span class="req-value" data-copy>307770</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Right Column: Info & Notes -->
-        <div class="secondary-area">
+    <main class="wrapper">
+        <div class="bento-grid">
             
-            <section class="glass-card info-card" data-tilt data-tilt-max="4" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2">
-                <h2 class="card-title">Важливо!</h2>
-                
-                <p style="transform: translateZ(30px); font-size: 0.95rem;">У призначенні платежу <b>обов'язково</b> вкажіть:</p>
-                <ul class="info-list">
-                    <li>повну адресу об'єкту нерухомості</li>
-                    <li>прізвище, ім'я та по батькові платника</li>
-                </ul>
+            <header class="header-cell">
+                <h1>ТОВ &laquo;КЛЮЧОВЕ РІШЕННЯ&raquo;</h1>
+                <p>Офіційні реквізити для оплати орендної плати</p>
+            </header>
 
-                <div class="example-box">
-                    <span class="example-label">Приклад заповнення</span>
-                    м. Дніпро, вул. Центральна, буд. 10, кв. 5, Іваненко Іван Іванович
+            <!-- Main IBAN Info (Span 2) -->
+            <section class="bento-card main-req" data-tilt data-tilt-max="2" data-tilt-speed="600" data-tilt-glare data-tilt-max-glare="0.1">
+                <h2 class="card-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" width="20"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                    Реквізити платежу
+                </h2>
+                
+                <div class="req-list">
+                    <div class="req-row">
+                        <span class="req-label">IBAN Рахунок</span>
+                        <div class="req-value-box">
+                            <button class="copy-btn" onclick="copyValue(this)" aria-label="Копіювати IBAN">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            </button>
+                            <span class="req-value large" data-copy>UA763077700000026000010023004</span>
+                        </div>
+                    </div>
+                    
+                    <div class="req-row">
+                        <span class="req-label">Отримувач</span>
+                        <div class="req-value-box">
+                            <button class="copy-btn" onclick="copyValue(this)" aria-label="Копіювати назву">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            </button>
+                            <span class="req-value" data-copy>ТОВ «КЛЮЧОВЕ РІШЕННЯ»</span>
+                        </div>
+                    </div>
+
+                    <div class="req-row">
+                        <span class="req-label">Код ЄДРПОУ</span>
+                        <div class="req-value-box">
+                            <button class="copy-btn" onclick="copyValue(this)" aria-label="Копіювати ЄДРПОУ">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            </button>
+                            <span class="req-value" data-copy>34410967</span>
+                        </div>
+                    </div>
                 </div>
             </section>
 
-            <section class="glass-card notes-card" data-tilt data-tilt-max="3" data-tilt-speed="400">
-                <h2 class="card-title">Зверніть увагу</h2>
-                
-                <div class="notes-list">
-                    <div class="note-item">
-                        <svg class="note-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                        <p>Оплата зараховується протягом 1–3 банківських днів.</p>
-                    </div>
-                    <div class="note-item">
-                        <svg class="note-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        <p>При помилках у заповненні призначення транзакція може затриматись.</p>
-                    </div>
+            <!-- Bank Identity (Span 1) -->
+            <section class="bento-card bank-req" data-tilt data-tilt-max="4" data-tilt-speed="600">
+                <div class="bank-logo-placeholder">
+                    <svg fill="currentColor" viewBox="0 0 24 24" width="32" height="32"><path d="M12 2L1 12h2v9h6v-6h6v6h6v-9h2L12 2zm0 2.83l7 7V20h-2v-6H7v6H5v-8.17l7-7V4.83z"/></svg>
                 </div>
+                <div class="bank-name">А-Банк</div>
+                <div class="mfo-code">
+                    <span>МФО:</span>
+                    <span data-copy>307770</span>
+                    <button class="copy-btn" style="width:24px; height:24px; background:transparent; color:var(--primary); box-shadow:none; border:1px solid currentColor" onclick="copyValue(this)" aria-label="Копіювати МФО">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" style="width:12px;height:12px"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Important Info (Span 2) -->
+            <section class="bento-card important-info" data-tilt data-tilt-max="2" data-tilt-speed="600" data-tilt-glare data-tilt-max-glare="0.2">
+                <h2 class="card-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" width="20"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Призначення платежу
+                </h2>
+                <p style="transform: translateZ(25px); font-weight: 500; font-size: 0.95rem; margin-bottom: 0.75rem;">Щоб ваша оплата була зарахована автоматично, <b>обов'язково</b> вкажіть:</p>
+                
+                <ul class="bullet-list">
+                    <li>Адресу об'єкту нерухомості</li>
+                    <li>П.І.Б. особи, яка проживає</li>
+                </ul>
+
+                <div class="example-box">
+                    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; opacity: 0.8;">Приклад</div>
+                    м. Дніпро, вул. Центральна, буд. 10, кв. 5, Іваненко І.І.
+                </div>
+            </section>
+
+            <!-- Notes (Span 1) -->
+            <section class="bento-card notes-info" data-tilt data-tilt-max="3" data-tilt-speed="600">
+                <h2 class="card-title">Зверніть увагу</h2>
+                <ul class="bullet-list notes">
+                    <li>Оплата зараховується протягом <b>1–3 днів</b></li>
+                    <li>Зберігайте квитанцію до підтвердження</li>
+                </ul>
             </section>
 
         </div>
 
         <footer class="footer">
-            &copy; 2025 ТОВ &laquo;КЛЮЧОВЕ РІШЕННЯ&raquo;
+            &copy; <span id="current-year"></span> ТОВ &laquo;КЛЮЧОВЕ РІШЕННЯ&raquo;
         </footer>
     </main>
 
-    <div class="toast" id="toast">
+    <!-- Success Toast -->
+    <div class="toast" id="toast" aria-live="polite">
         <svg style="width: 20px; height: 20px; color: #4ade80;" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-        Скопійовано!
+        <span>Реквізит скопійовано!</span>
     </div>
 
-    <!-- Vanilla Tilt for 3D premium effect -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
     <script>
-        // Init Tilt depending on window size (disable on mobile for performance/UX)
-        if (window.innerWidth > 960) {
+        // Set dynamic year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Init Tilt for Desktop only
+        if (window.matchMedia("(min-width: 900px)").matches) {
             VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
-                scale: 1.01,
+                scale: 1.015,
                 speed: 1000,
-                perspective: 1000,
+                perspective: 1200,
                 transition: true,
                 easing: "cubic-bezier(.03,.98,.52,.99)"
             });
         }
 
-        // Copy functionality
+        // Copy interactions
         function copyValue(btn) {
-            const reqItem = btn.closest('.req-item');
-            const textToCopy = reqItem.querySelector('[data-copy]').textContent.trim();
+            const container = btn.parentElement;
+            // Find the closest sibling or child with data-copy
+            const dataElement = container.querySelector('[data-copy]') || btn.nextElementSibling;
+            if (!dataElement) return;
+
+            const textToCopy = dataElement.textContent.trim();
             
             navigator.clipboard.writeText(textToCopy).then(() => {
-                // Button animation
-                const originalIcon = btn.innerHTML;
-                btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>';
-                btn.style.background = '#0ea5e9';
-                btn.style.color = 'white';
+                const originalContent = btn.innerHTML;
                 
-                // Toast
+                // Active state
+                btn.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>';
+                const isOutlineBtn = btn.style.background === 'transparent';
+                
+                if (isOutlineBtn) {
+                    btn.style.background = 'var(--primary)';
+                    btn.style.color = 'white';
+                } else {
+                    btn.style.background = '#10b981'; // Success green
+                }
+                
+                // Show toast
                 const toast = document.getElementById('toast');
                 toast.classList.add('show');
                 
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 2000);
+                setTimeout(() => { toast.classList.remove('show'); }, 2000);
 
+                // Revert button
                 setTimeout(() => {
-                    btn.innerHTML = originalIcon;
-                    btn.style.background = '';
-                    btn.style.color = '';
+                    btn.innerHTML = originalContent;
+                    if (isOutlineBtn) {
+                        btn.style.background = 'transparent';
+                        btn.style.color = 'var(--primary)';
+                    } else {
+                        btn.style.background = ''; // Reverts to CSS class
+                    }
                 }, 2500);
-            }).catch(err => {
-                console.error('Copy failed', err);
             });
         }
     </script>
