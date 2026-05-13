@@ -669,8 +669,8 @@
                     .map(row => ({
                         address: (row.c?.[1]?.v ?? '').toString().trim(),
                         name: (row.c?.[2]?.v ?? '').toString().trim(),
-                        debtRaw: row.c?.[8]?.v ?? null,
-                        debtFormatted: row.c?.[8]?.f ?? null
+                        debtRaw: row.c?.[3]?.v ?? null,
+                        debtFormatted: row.c?.[3]?.f ?? null
                     }))
                     .filter(r => r.name);
                 return sheetCache;
