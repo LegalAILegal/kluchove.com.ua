@@ -739,7 +739,8 @@
             if (sheetCache) return sheetCache;
             if (sheetPromise) return sheetPromise;
             sheetPromise = (async () => {
-                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}`;
+                const tq = encodeURIComponent('select B, C');
+                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}&tq=${tq}`;
                 const resp = await fetch(url, { cache: 'no-store' });
                 if (!resp.ok) throw new Error('HTTP ' + resp.status);
                 const text = await resp.text();
@@ -749,10 +750,8 @@
                 const data = JSON.parse(text.substring(start, end + 1));
                 sheetCache = (data.table?.rows || [])
                     .map(row => ({
-                        address: (row.c?.[1]?.v ?? '').toString().trim(),
-                        name: (row.c?.[2]?.v ?? '').toString().trim(),
-                        debtRaw: row.c?.[3]?.v ?? null,
-                        debtFormatted: row.c?.[3]?.f ?? null
+                        address: (row.c?.[0]?.v ?? '').toString().trim(),
+                        name: (row.c?.[1]?.v ?? '').toString().trim()
                     }))
                     .filter(r => r.name);
                 return sheetCache;
@@ -795,22 +794,6 @@
                 }
             }
             return variants.has(q);
-        }
-
-        function formatDebt(raw, formatted) {
-            if (raw === null || raw === undefined || raw === '') return { text: '—', amount: 0 };
-            let num;
-            if (typeof raw === 'number') {
-                num = raw;
-            } else {
-                const cleaned = raw.toString().replace(/[^\d.,\-]/g, '').replace(/\s/g, '').replace(',', '.');
-                num = parseFloat(cleaned);
-            }
-            if (isNaN(num)) return { text: (formatted || raw.toString()), amount: 0 };
-            const text = new Intl.NumberFormat('uk-UA', {
-                style: 'currency', currency: 'UAH', minimumFractionDigits: 2
-            }).format(num);
-            return { text, amount: num };
         }
 
         function escapeHtml(s) {
@@ -974,8 +957,6 @@
 
         function renderResult(row) {
             updatePaymentPurpose(row);
-            const debt = formatDebt(row.debtRaw, row.debtFormatted);
-            const hasDebt = debt.amount > 0;
             searchOutput.innerHTML = `
                 <div class="search-result">
                     <div class="result-card">
@@ -986,10 +967,6 @@
                         <div class="result-row">
                             <span class="result-label">Адреса</span>
                             <span class="result-value">${escapeHtml(row.address) || '—'}</span>
-                        </div>
-                        <div class="result-row result-debt${hasDebt ? ' has-debt' : ''}">
-                            <span class="result-label">Заборгованість</span>
-                            <span class="result-value">${escapeHtml(debt.text)}</span>
                         </div>
                     </div>
                 </div>
