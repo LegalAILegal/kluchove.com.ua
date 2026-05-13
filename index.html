@@ -148,7 +148,7 @@
         }
 
         /* Layout placement */
-        .search-card { grid-column: 1 / -1; }
+        .search-card { grid-column: 1 / -1; position: relative; z-index: 10; }
         .main-req { grid-column: 1 / 2; grid-row: span 2; justify-content: center; }
         .important-info { grid-column: 2 / 3; background: var(--important-bg); color: var(--text-invert); }
         .notes-info { grid-column: 2 / 3; }
@@ -419,6 +419,42 @@
             font-size: 0.9rem;
             transform: translateZ(40px);
             margin-top: 0.5rem;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .important-info .example-box.personalized {
+            background: rgba(255,255,255,0.28);
+            border-color: rgba(255,255,255,0.45);
+        }
+        .example-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.4rem;
+            opacity: 0.85;
+            font-weight: 600;
+        }
+        .payment-purpose-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+        }
+        .payment-purpose-row [data-copy] {
+            flex: 1;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+        .example-box .copy-btn {
+            background: rgba(255,255,255,0.22);
+            color: white;
+            box-shadow: none;
+            border: 1px solid rgba(255,255,255,0.25);
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+        .example-box .copy-btn:hover, .example-box .copy-btn:focus-visible {
+            background: rgba(255,255,255,0.4);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
 
         ul.bullet-list {
@@ -644,9 +680,14 @@
                     <li>П.І.Б. особи, яка проживає</li>
                 </ul>
 
-                <div class="example-box">
-                    <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.3rem; opacity: 0.8;">Приклад</div>
-                    м. Дніпро, вул. Центральна, буд. 10, кв. 5, Іваненко І.І.
+                <div class="example-box" id="payment-purpose-box">
+                    <div class="example-label" id="payment-purpose-label">Приклад</div>
+                    <div class="payment-purpose-row">
+                        <span data-copy id="payment-purpose-text">м. Дніпро, вул. Центральна, буд. 10, кв. 5, Іваненко І.І.</span>
+                        <button class="copy-btn" onclick="copyValue(this)" aria-label="Копіювати призначення платежу">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        </button>
+                    </div>
                 </div>
             </section>
 
@@ -898,7 +939,41 @@
             `);
         }
 
+        const ADDR_ABBR = ['смт', 'вул', 'просп', 'пров', 'корп', 'буд', 'кв', 'пр', 'м', 'б', 'с'];
+        function normalizeAddress(addr) {
+            if (!addr) return '';
+            let r = addr.toString();
+            // "м,Дніпро" / "м., Дніпро" / "вул,Назва"  →  "м. Дніпро"
+            ADDR_ABBR.forEach(a => {
+                r = r.replace(new RegExp(`(^|[^\\p{L}])${a}\\.?\\s*,\\s*`, 'giu'), `$1${a}. `);
+            });
+            // "кв53" → "кв. 53" (only for unit-style abbreviations)
+            ['кв', 'буд', 'б', 'корп'].forEach(a => {
+                r = r.replace(new RegExp(`(^|[^\\p{L}])${a}\\.?(\\d)`, 'giu'), `$1${a}. $2`);
+            });
+            return r
+                .replace(/,(\S)/g, ', $1')
+                .replace(/\s+/g, ' ')
+                .replace(/\s+,/g, ',')
+                .trim();
+        }
+
+        const PAYMENT_EXAMPLE = 'м. Дніпро, вул. Центральна, буд. 10, кв. 5, Іваненко І.І.';
+        const paymentBox = document.getElementById('payment-purpose-box');
+        const paymentLabel = document.getElementById('payment-purpose-label');
+        const paymentText = document.getElementById('payment-purpose-text');
+
+        function updatePaymentPurpose(row) {
+            const addr = normalizeAddress(row.address);
+            const name = (row.name || '').split('/')[0].trim().replace(/\s+/g, ' ');
+            const parts = [addr, name].filter(Boolean);
+            paymentText.textContent = parts.join(', ');
+            paymentLabel.textContent = 'Ваше призначення платежу';
+            paymentBox.classList.add('personalized');
+        }
+
         function renderResult(row) {
+            updatePaymentPurpose(row);
             const debt = formatDebt(row.debtRaw, row.debtFormatted);
             const hasDebt = debt.amount > 0;
             searchOutput.innerHTML = `
