@@ -154,10 +154,13 @@
         .notes-info { grid-column: 2 / 3; }
 
         /* Search */
+        .search-form-wrapper {
+            position: relative;
+            transform: translateZ(20px);
+        }
         .search-form {
             display: flex;
             gap: 0.6rem;
-            transform: translateZ(20px);
         }
         .search-input {
             flex: 1;
@@ -279,6 +282,38 @@
         }
         .search-status.error { color: #ef4444; }
         .search-status svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+        .search-suggestions {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: var(--bg-base);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+            z-index: 100;
+            max-height: 300px;
+            overflow-y: auto;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: none;
+        }
+        .search-suggestions.show { display: block; }
+        .suggestion-item {
+            padding: 0.7rem 1rem;
+            cursor: pointer;
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--card-border);
+            transition: background 0.15s;
+        }
+        .suggestion-item:last-child { border-bottom: none; }
+        .suggestion-item:hover,
+        .suggestion-item.active {
+            background: var(--item-hover);
+        }
 
         .card-title {
             font-size: 1.1rem;
@@ -507,25 +542,29 @@
             </header>
 
             <!-- Search: Debt Lookup -->
-            <section class="bento-card search-card" data-tilt data-tilt-max="2" data-tilt-speed="600" data-tilt-glare data-tilt-max-glare="0.1">
+            <section class="bento-card search-card">
                 <h2 class="card-title">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" width="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"></path></svg>
                     Перевірка заборгованості
                 </h2>
-                <form class="search-form" id="search-form" autocomplete="off">
-                    <input
-                        type="text"
-                        class="search-input"
-                        id="search-input"
-                        placeholder="Прізвище Ім'я По батькові"
-                        aria-label="Введіть повне ПІБ"
-                        spellcheck="false"
-                        required>
-                    <button type="submit" class="search-submit" id="search-submit">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"></path></svg>
-                        Знайти
-                    </button>
-                </form>
+                <div class="search-form-wrapper">
+                    <form class="search-form" id="search-form" autocomplete="off">
+                        <input
+                            type="text"
+                            class="search-input"
+                            id="search-input"
+                            placeholder="Прізвище Ім'я По батькові"
+                            aria-label="Введіть повне ПІБ"
+                            spellcheck="false"
+                            autocomplete="off"
+                            required>
+                        <button type="submit" class="search-submit" id="search-submit">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"></path></svg>
+                            Знайти
+                        </button>
+                    </form>
+                    <div class="search-suggestions" id="search-suggestions" role="listbox"></div>
+                </div>
                 <p class="search-hint">Введіть повне П.І.Б. так, як зазначено у договорі</p>
                 <div id="search-output"></div>
             </section>
@@ -737,10 +776,114 @@
             ));
         }
 
+        const searchCard = document.querySelector('.search-card');
         const searchForm = document.getElementById('search-form');
         const searchInput = document.getElementById('search-input');
         const searchSubmit = document.getElementById('search-submit');
         const searchOutput = document.getElementById('search-output');
+        const suggestionsEl = document.getElementById('search-suggestions');
+
+        const SUGGEST_MIN_CHARS = 3;
+        const SUGGEST_MAX_ITEMS = 8;
+        let currentSuggestions = [];
+        let activeSuggestion = -1;
+        let suggestTimer = null;
+
+        function bringSearchIntoView() {
+            // Defer to allow layout to settle, then scroll the search card to top.
+            requestAnimationFrame(() => {
+                searchCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
+
+        function hideSuggestions() {
+            suggestionsEl.classList.remove('show');
+            suggestionsEl.innerHTML = '';
+            currentSuggestions = [];
+            activeSuggestion = -1;
+        }
+
+        function renderSuggestions(rows) {
+            if (!rows.length) { hideSuggestions(); return; }
+            currentSuggestions = rows;
+            activeSuggestion = -1;
+            suggestionsEl.innerHTML = rows.map((r, i) =>
+                `<div class="suggestion-item" role="option" data-idx="${i}">${escapeHtml(r.name)}</div>`
+            ).join('');
+            suggestionsEl.classList.add('show');
+        }
+
+        function updateActive() {
+            const items = suggestionsEl.querySelectorAll('.suggestion-item');
+            items.forEach((it, i) => it.classList.toggle('active', i === activeSuggestion));
+            if (activeSuggestion >= 0) items[activeSuggestion].scrollIntoView({ block: 'nearest' });
+        }
+
+        function pickSuggestion(idx) {
+            const row = currentSuggestions[idx];
+            if (!row) return;
+            searchInput.value = row.name;
+            hideSuggestions();
+            renderResult(row);
+            bringSearchIntoView();
+        }
+
+        async function updateSuggestions() {
+            const query = searchInput.value.trim();
+            if (query.length < SUGGEST_MIN_CHARS) { hideSuggestions(); return; }
+            try {
+                const rows = await loadSheet();
+                const q = normalizeName(query);
+                const matches = rows
+                    .filter(r => {
+                        const norm = normalizeName(r.name);
+                        if (norm.includes(q)) return true;
+                        return norm.split(' ').some(tok => tok.startsWith(q));
+                    })
+                    .slice(0, SUGGEST_MAX_ITEMS);
+                renderSuggestions(matches);
+            } catch (e) {
+                hideSuggestions();
+            }
+        }
+
+        searchInput.addEventListener('input', () => {
+            clearTimeout(suggestTimer);
+            suggestTimer = setTimeout(updateSuggestions, 150);
+        });
+
+        searchInput.addEventListener('keydown', e => {
+            if (!suggestionsEl.classList.contains('show')) return;
+            const items = suggestionsEl.querySelectorAll('.suggestion-item');
+            if (!items.length) return;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                activeSuggestion = (activeSuggestion + 1) % items.length;
+                updateActive();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                activeSuggestion = (activeSuggestion - 1 + items.length) % items.length;
+                updateActive();
+            } else if (e.key === 'Enter' && activeSuggestion >= 0) {
+                e.preventDefault();
+                pickSuggestion(activeSuggestion);
+            } else if (e.key === 'Escape') {
+                hideSuggestions();
+            }
+        });
+
+        suggestionsEl.addEventListener('mousedown', e => {
+            const item = e.target.closest('.suggestion-item');
+            if (!item) return;
+            e.preventDefault();
+            pickSuggestion(parseInt(item.dataset.idx, 10));
+        });
+
+        document.addEventListener('click', e => {
+            if (!searchForm.contains(e.target) && !suggestionsEl.contains(e.target)) {
+                hideSuggestions();
+            }
+        });
 
         function renderStatus(html, isError = false) {
             searchOutput.innerHTML = `<div class="search-status${isError ? ' error' : ''}">${html}</div>`;
@@ -778,6 +921,7 @@
 
         searchForm.addEventListener('submit', async e => {
             e.preventDefault();
+            hideSuggestions();
             const query = searchInput.value.trim();
             if (!query) return;
 
@@ -800,6 +944,7 @@
                 `, true);
             } finally {
                 searchSubmit.disabled = false;
+                bringSearchIntoView();
             }
         });
 
