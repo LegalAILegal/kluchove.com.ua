@@ -3,3 +3,7 @@ __pycache__/
 .env
 *.bak
 .idea/
+
+# Backend secrets (keep the README that documents where the key goes)
+backend/secrets/*
+!backend/secrets/README.md

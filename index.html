@@ -212,6 +212,38 @@
             font-size: 0.8rem;
             color: var(--text-muted);
         }
+        .otp-form { margin-top: 0.25rem; }
+        .otp-hint.error { color: #ef4444; }
+
+        .claim-block { margin-top: 1rem; }
+        .claim-block > summary {
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            list-style: none;
+            padding: 0.35rem 0;
+            user-select: none;
+        }
+        .claim-block > summary::-webkit-details-marker { display: none; }
+        .claim-block > summary::before { content: '+ '; }
+        .claim-block[open] > summary::before { content: '– '; }
+        .claim-block .search-input { margin-bottom: 0.5rem; }
+
+        .debt-value { font-weight: 700; font-size: 1.05rem; color: var(--primary); }
+
+        .link-btn {
+            margin-top: 0.75rem;
+            background: none;
+            border: none;
+            padding: 0;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+        }
+        .link-btn:hover { text-decoration: underline; }
 
         .search-result {
             margin-top: 1rem;
@@ -279,43 +311,6 @@
         }
         .search-status.error { color: #ef4444; }
         .search-status svg { width: 18px; height: 18px; flex-shrink: 0; }
-
-        .search-suggestions {
-            position: absolute;
-            top: calc(100% + 4px);
-            left: 0;
-            right: 0;
-            background: #ffffff;
-            border: 1px solid rgba(14, 165, 233, 0.18);
-            border-radius: 12px;
-            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.18);
-            z-index: 100;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-        }
-        @media (prefers-color-scheme: dark) {
-            .search-suggestions {
-                background: #1e293b;
-                border-color: rgba(56, 189, 248, 0.25);
-                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-            }
-        }
-        .search-suggestions.show { display: block; }
-        .suggestion-item {
-            padding: 0.7rem 1rem;
-            cursor: pointer;
-            font-size: 0.92rem;
-            font-weight: 500;
-            color: var(--text-main);
-            border-bottom: 1px solid var(--card-border);
-            transition: background 0.15s;
-        }
-        .suggestion-item:last-child { border-bottom: none; }
-        .suggestion-item:hover,
-        .suggestion-item.active {
-            background: var(--item-hover);
-        }
 
         .card-title {
             font-size: 1.1rem;
@@ -585,25 +580,45 @@
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" width="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"></path></svg>
                     Перевірка заборгованості
                 </h2>
-                <div class="search-form-wrapper">
-                    <form class="search-form" id="search-form" autocomplete="off">
-                        <input
-                            type="text"
-                            class="search-input"
-                            id="search-input"
-                            placeholder="Прізвище Ім'я По батькові"
-                            aria-label="Введіть повне ПІБ"
-                            spellcheck="false"
-                            autocomplete="off"
-                            required>
-                        <button type="submit" class="search-submit" id="search-submit">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M11 19a8 8 0 100-16 8 8 0 000 16z"></path></svg>
-                            Знайти
-                        </button>
-                    </form>
-                    <div class="search-suggestions" id="search-suggestions" role="listbox"></div>
-                </div>
-                <p class="search-hint">Введіть повне П.І.Б. так, як зазначено у договорі</p>
+                <!-- Step 1: request an SMS code by phone number -->
+                <form class="search-form" id="request-form" autocomplete="off">
+                    <input
+                        type="tel"
+                        class="search-input"
+                        id="search-input"
+                        inputmode="tel"
+                        placeholder="Номер мобільного"
+                        aria-label="Введіть номер мобільного телефону"
+                        autocomplete="tel"
+                        required>
+                    <button type="submit" class="search-submit" id="request-submit">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h8M8 14h5m-9 6l2.5-2.5H17a3 3 0 003-3V7a3 3 0 00-3-3H7a3 3 0 00-3 3v13z"></path></svg>
+                        Далі
+                    </button>
+                </form>
+                <p class="search-hint" id="request-hint">Введіть номер мобільного телефону. Код підтвердження надійде вам у SMS.</p>
+
+                <!-- Step 2: enter the SMS code -->
+                <form class="search-form otp-form" id="verify-form" autocomplete="off" hidden>
+                    <input
+                        type="text"
+                        class="search-input"
+                        id="code-input"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        maxlength="8"
+                        placeholder="Код із SMS"
+                        aria-label="Введіть код із SMS"
+                        autocomplete="one-time-code"
+                        required>
+                    <button type="submit" class="search-submit" id="verify-submit">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                        Підтвердити
+                    </button>
+                </form>
+                <p class="search-hint otp-hint" id="verify-hint" hidden></p>
+                <button type="button" class="link-btn" id="restart-btn" hidden>← Змінити номер</button>
+
                 <div id="search-output"></div>
             </section>
 
@@ -729,72 +744,16 @@
             });
         }
 
-        // ----- Debt Lookup -----
-        const SHEET_ID = '1HqqepslB5VUAm24cpubUDtt015DqQsmXy6YoXEKMCIU';
-        const SHEET_GID = '0';
-        let sheetCache = null;
-        let sheetPromise = null;
-
-        async function loadSheet() {
-            if (sheetCache) return sheetCache;
-            if (sheetPromise) return sheetPromise;
-            sheetPromise = (async () => {
-                const tq = encodeURIComponent('select B, C');
-                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&gid=${SHEET_GID}&tq=${tq}`;
-                const resp = await fetch(url, { cache: 'no-store' });
-                if (!resp.ok) throw new Error('HTTP ' + resp.status);
-                const text = await resp.text();
-                const start = text.indexOf('{');
-                const end = text.lastIndexOf('}');
-                if (start < 0 || end < 0) throw new Error('Bad response');
-                const data = JSON.parse(text.substring(start, end + 1));
-                sheetCache = (data.table?.rows || [])
-                    .map(row => ({
-                        address: (row.c?.[0]?.v ?? '').toString().trim(),
-                        name: (row.c?.[1]?.v ?? '').toString().trim()
-                    }))
-                    .filter(r => r.name);
-                return sheetCache;
-            })();
-            try { return await sheetPromise; }
-            finally { sheetPromise = null; }
-        }
-
-        // Map visually-identical Latin letters to Cyrillic (common typo in source data)
-        const LATIN_TO_CYR = {
-            'a':'а','c':'с','e':'е','i':'і','o':'о','p':'р','x':'х','y':'у',
-            'A':'А','B':'В','C':'С','E':'Е','H':'Н','I':'І','K':'К','M':'М',
-            'O':'О','P':'Р','T':'Т','X':'Х','Y':'У'
+        // ----- SMS-authorized debt lookup -----
+        // The Google Sheet is now private; all personal data comes from the backend
+        // ONLY after the tenant proves ownership of their phone via an SMS code.
+        const API = {
+            request: '/api/auth/request',
+            verify:  '/api/auth/verify',
+            me:      '/api/me',
+            logout:  '/api/auth/logout',
+            claim:   '/api/objects/claim',
         };
-        function normalizeName(s) {
-            return (s ?? '').toString()
-                .replace(/[a-zA-Z]/g, ch => LATIN_TO_CYR[ch] || ch)
-                .toLowerCase()
-                .replace(/[`'’ʼ]/g, "'")
-                .replace(/[  -​]/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim();
-        }
-
-        function nameMatches(query, fullName) {
-            const q = normalizeName(query);
-            if (!q) return false;
-            const variants = new Set([normalizeName(fullName)]);
-            // Aliases in source data look like "Surname Name Patronymic/AltSurname"
-            if (fullName.includes('/')) {
-                const slashParts = fullName.split('/');
-                variants.add(normalizeName(slashParts[0]));
-                const mainTokens = slashParts[0].trim().split(/\s+/);
-                if (mainTokens.length >= 2) {
-                    const rest = mainTokens.slice(1).join(' ');
-                    for (let i = 1; i < slashParts.length; i++) {
-                        const alt = slashParts[i].trim().split(/\s+/)[0];
-                        if (alt) variants.add(normalizeName(alt + ' ' + rest));
-                    }
-                }
-            }
-            return variants.has(q);
-        }
 
         function escapeHtml(s) {
             return (s ?? '').toString().replace(/[&<>"']/g, c => (
@@ -802,205 +761,274 @@
             ));
         }
 
-        const searchCard = document.querySelector('.search-card');
-        const searchForm = document.getElementById('search-form');
-        const searchInput = document.getElementById('search-input');
-        const searchSubmit = document.getElementById('search-submit');
-        const searchOutput = document.getElementById('search-output');
-        const suggestionsEl = document.getElementById('search-suggestions');
+        const searchCard    = document.querySelector('.search-card');
+        const requestForm   = document.getElementById('request-form');
+        const searchInput   = document.getElementById('search-input');
+        const requestSubmit = document.getElementById('request-submit');
+        const requestHint   = document.getElementById('request-hint');
+        const verifyForm    = document.getElementById('verify-form');
+        const codeInput     = document.getElementById('code-input');
+        const verifySubmit  = document.getElementById('verify-submit');
+        const verifyHint    = document.getElementById('verify-hint');
+        const restartBtn    = document.getElementById('restart-btn');
+        const searchOutput  = document.getElementById('search-output');
 
-        const SUGGEST_MIN_CHARS = 3;
-        const SUGGEST_MAX_ITEMS = 8;
-        let currentSuggestions = [];
-        let activeSuggestion = -1;
-        let suggestTimer = null;
+        let activeChallenge = null;
 
         function bringSearchIntoView() {
-            // Defer to allow layout to settle, then scroll the search card to top.
             requestAnimationFrame(() => {
                 searchCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
             });
         }
 
-        function hideSuggestions() {
-            suggestionsEl.classList.remove('show');
-            suggestionsEl.innerHTML = '';
-            currentSuggestions = [];
-            activeSuggestion = -1;
-        }
-
-        function renderSuggestions(rows) {
-            if (!rows.length) { hideSuggestions(); return; }
-            currentSuggestions = rows;
-            activeSuggestion = -1;
-            suggestionsEl.innerHTML = rows.map((r, i) =>
-                `<div class="suggestion-item" role="option" data-idx="${i}">${escapeHtml(r.name)}</div>`
-            ).join('');
-            suggestionsEl.classList.add('show');
-        }
-
-        function updateActive() {
-            const items = suggestionsEl.querySelectorAll('.suggestion-item');
-            items.forEach((it, i) => it.classList.toggle('active', i === activeSuggestion));
-            if (activeSuggestion >= 0) items[activeSuggestion].scrollIntoView({ block: 'nearest' });
-        }
-
-        function pickSuggestion(idx) {
-            const row = currentSuggestions[idx];
-            if (!row) return;
-            searchInput.value = row.name;
-            hideSuggestions();
-            renderResult(row);
-            bringSearchIntoView();
-        }
-
-        async function updateSuggestions() {
-            const query = searchInput.value.trim();
-            if (query.length < SUGGEST_MIN_CHARS) { hideSuggestions(); return; }
-            try {
-                const rows = await loadSheet();
-                const q = normalizeName(query);
-                const matches = rows
-                    .filter(r => {
-                        const norm = normalizeName(r.name);
-                        if (norm.includes(q)) return true;
-                        return norm.split(' ').some(tok => tok.startsWith(q));
-                    })
-                    .slice(0, SUGGEST_MAX_ITEMS);
-                renderSuggestions(matches);
-            } catch (e) {
-                hideSuggestions();
-            }
-        }
-
-        searchInput.addEventListener('input', () => {
-            clearTimeout(suggestTimer);
-            suggestTimer = setTimeout(updateSuggestions, 150);
-        });
-
-        searchInput.addEventListener('keydown', e => {
-            if (!suggestionsEl.classList.contains('show')) return;
-            const items = suggestionsEl.querySelectorAll('.suggestion-item');
-            if (!items.length) return;
-            if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                activeSuggestion = (activeSuggestion + 1) % items.length;
-                updateActive();
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                activeSuggestion = (activeSuggestion - 1 + items.length) % items.length;
-                updateActive();
-            } else if (e.key === 'Enter' && activeSuggestion >= 0) {
-                e.preventDefault();
-                pickSuggestion(activeSuggestion);
-            } else if (e.key === 'Escape') {
-                hideSuggestions();
-            }
-        });
-
-        suggestionsEl.addEventListener('mousedown', e => {
-            const item = e.target.closest('.suggestion-item');
-            if (!item) return;
-            e.preventDefault();
-            pickSuggestion(parseInt(item.dataset.idx, 10));
-        });
-
-        document.addEventListener('click', e => {
-            if (!searchForm.contains(e.target) && !suggestionsEl.contains(e.target)) {
-                hideSuggestions();
-            }
-        });
-
         function renderStatus(html, isError = false) {
             searchOutput.innerHTML = `<div class="search-status${isError ? ' error' : ''}">${html}</div>`;
         }
+        function clearStatus() { searchOutput.innerHTML = ''; }
 
-        function renderNotFound() {
-            renderStatus(`
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span>Запис не знайдено. Перевірте, чи ПІБ введено повністю та без помилок.</span>
-            `);
+        const SPINNER = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="9" stroke-dasharray="40 20"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/></circle></svg>`;
+        const ICON_INFO = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+        const ICON_WARN = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"></path></svg>`;
+
+        async function postJson(url, body) {
+            const resp = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                cache: 'no-store',
+                body: JSON.stringify(body || {}),
+            });
+            let data = {};
+            try { data = await resp.json(); } catch (e) {}
+            return { ok: resp.ok, status: resp.status, data };
         }
 
-        const ADDR_ABBR = ['смт', 'вул', 'просп', 'пров', 'корп', 'буд', 'кв', 'пр', 'м', 'б', 'с'];
-        function normalizeAddress(addr) {
-            if (!addr) return '';
-            let r = addr.toString();
-            // "м,Дніпро" / "м., Дніпро" / "вул,Назва"  →  "м. Дніпро"
-            ADDR_ABBR.forEach(a => {
-                r = r.replace(new RegExp(`(^|[^\\p{L}])${a}\\.?\\s*,\\s*`, 'giu'), `$1${a}. `);
-            });
-            // "кв53" → "кв. 53" (only for unit-style abbreviations)
-            ['кв', 'буд', 'б', 'корп'].forEach(a => {
-                r = r.replace(new RegExp(`(^|[^\\p{L}])${a}\\.?(\\d)`, 'giu'), `$1${a}. $2`);
-            });
-            return r
-                .replace(/,(\S)/g, ', $1')
-                .replace(/\s+/g, ' ')
-                .replace(/\s+,/g, ',')
-                .trim();
+        // ----- Step 1: request an SMS code -----
+        function showStep(step) {
+            const onRequest = step === 'request';
+            requestForm.hidden = !onRequest;
+            requestHint.hidden = !onRequest;
+            verifyForm.hidden = onRequest;
+            verifyHint.hidden = onRequest;
+            restartBtn.hidden = onRequest;
         }
 
+        function setVerifyHint(text, isError = false) {
+            verifyHint.textContent = text;
+            verifyHint.classList.toggle('error', isError);
+            verifyHint.hidden = false;
+        }
+
+        requestForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            const phone = searchInput.value.trim();
+            if (!phone) return;
+            requestSubmit.disabled = true;
+            renderStatus(`${SPINNER}<span>Надсилаємо код підтвердження...</span>`);
+            try {
+                const { status, data } = await postJson(API.request, { phone });
+                if (data.status === 'sent') {
+                    activeChallenge = data.challenge;
+                    clearStatus();
+                    showStep('verify');
+                    const via = data.channel === 'tg' ? 'у Telegram' : 'в SMS';
+                    setVerifyHint(`Ми надіслали код ${via} на номер ${data.masked_phone}. Введіть його нижче.`);
+                    codeInput.value = '';
+                    codeInput.focus();
+                } else if (data.status === 'invalid_phone') {
+                    renderStatus(`${ICON_INFO}<span>Невірний номер. Введіть мобільний у форматі 0XX XXX XX XX.</span>`);
+                } else if (status === 429 || data.status === 'rate_limited') {
+                    renderStatus(`${ICON_WARN}<span>Забагато спроб. Спробуйте, будь ласка, пізніше.</span>`, true);
+                } else {
+                    renderStatus(`${ICON_WARN}<span>Не вдалося надіслати SMS. Спробуйте пізніше.</span>`, true);
+                }
+            } catch (err) {
+                console.error(err);
+                renderStatus(`${ICON_WARN}<span>Помилка з'єднання. Спробуйте пізніше.</span>`, true);
+            } finally {
+                requestSubmit.disabled = false;
+                bringSearchIntoView();
+            }
+        });
+
+        // ----- Step 2: verify the code -----
+        verifyForm.addEventListener('submit', async e => {
+            e.preventDefault();
+            const code = codeInput.value.trim();
+            if (!code || !activeChallenge) return;
+            verifySubmit.disabled = true;
+            setVerifyHint('Перевіряємо код...');
+            try {
+                const { status, data } = await postJson(API.verify, { challenge: activeChallenge, code });
+                if (data.status === 'ok') {
+                    activeChallenge = null;
+                    renderDashboard(data.data);
+                } else if (data.status === 'invalid_code') {
+                    const left = data.attempts_left;
+                    setVerifyHint(left > 0
+                        ? `Невірний код. Залишилось спроб: ${left}.`
+                        : 'Невірний код. Спроби вичерпано — почніть спочатку.', true);
+                    if (left <= 0) { activeChallenge = null; showStep('request'); }
+                } else if (data.status === 'expired' || status === 410) {
+                    activeChallenge = null;
+                    showStep('request');
+                    renderStatus(`${ICON_INFO}<span>Час дії коду сплив. Запитайте новий код.</span>`);
+                } else {
+                    setVerifyHint('Не вдалося перевірити код. Спробуйте пізніше.', true);
+                }
+            } catch (err) {
+                console.error(err);
+                setVerifyHint("Помилка з'єднання. Спробуйте пізніше.", true);
+            } finally {
+                verifySubmit.disabled = false;
+            }
+        });
+
+        restartBtn.addEventListener('click', () => {
+            activeChallenge = null;
+            showStep('request');
+            clearStatus();
+            searchInput.focus();
+        });
+
+        // ----- Authenticated result -----
         const PAYMENT_EXAMPLE = 'м. Дніпро, вул. Центральна, буд. 10, кв. 5, Іваненко І.І.';
-        const paymentBox = document.getElementById('payment-purpose-box');
+        const paymentBox   = document.getElementById('payment-purpose-box');
         const paymentLabel = document.getElementById('payment-purpose-label');
-        const paymentText = document.getElementById('payment-purpose-text');
+        const paymentText  = document.getElementById('payment-purpose-text');
 
-        function updatePaymentPurpose(row) {
-            const addr = normalizeAddress(row.address);
-            const name = (row.name || '').split('/')[0].trim().replace(/\s+/g, ' ');
-            const parts = [addr, name].filter(Boolean);
-            paymentText.textContent = parts.join(', ');
+        function updatePaymentPurpose(purpose) {
+            if (!purpose) return;
+            paymentText.textContent = purpose;
             paymentLabel.textContent = 'Ваше призначення платежу';
             paymentBox.classList.add('personalized');
         }
 
-        function renderResult(row) {
-            updatePaymentPurpose(row);
-            searchOutput.innerHTML = `
-                <div class="search-result">
-                    <div class="result-card">
-                        <div class="result-row">
-                            <span class="result-label">ПІБ</span>
-                            <span class="result-value">${escapeHtml(row.name)}</span>
+        function objectCard(o) {
+            const purpose = o.payment_purpose
+                ? `<div class="result-row">
+                        <span class="result-label">Призначення платежу</span>
+                        <div class="req-value-box">
+                            <span class="result-value" data-copy>${escapeHtml(o.payment_purpose)}</span>
+                            <button class="copy-btn" onclick="copyValue(this)" aria-label="Копіювати призначення платежу">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                            </button>
                         </div>
-                        <div class="result-row">
-                            <span class="result-label">Адреса</span>
-                            <span class="result-value">${escapeHtml(row.address) || '—'}</span>
-                        </div>
+                    </div>`
+                : '';
+            return `
+                <div class="result-card">
+                    <div class="result-row">
+                        <span class="result-label">ПІБ</span>
+                        <span class="result-value">${escapeHtml(o.name)}</span>
                     </div>
-                </div>
-            `;
+                    <div class="result-row">
+                        <span class="result-label">Адреса</span>
+                        <span class="result-value">${escapeHtml(o.address) || '—'}</span>
+                    </div>
+                    <div class="result-row debt-row">
+                        <span class="result-label">Заборгованість</span>
+                        <span class="result-value debt-value">${escapeHtml(o.debt) || '—'}</span>
+                    </div>
+                    ${purpose}
+                </div>`;
         }
 
-        searchForm.addEventListener('submit', async e => {
-            e.preventDefault();
-            hideSuggestions();
-            const query = searchInput.value.trim();
-            if (!query) return;
+        function claimForm() {
+            return `
+                <form class="search-form otp-form" id="claim-form" autocomplete="off">
+                    <input type="text" class="search-input" id="claim-name"
+                        placeholder="Прізвище Ім'я По батькові (як у договорі)"
+                        aria-label="ПІБ для прив'язки об'єкта" required>
+                    <input type="text" class="search-input" id="claim-address"
+                        placeholder="Адреса об'єкта" aria-label="Адреса об'єкта">
+                    <button type="submit" class="search-submit" id="claim-submit">Надіслати запит</button>
+                </form>`;
+        }
 
-            searchSubmit.disabled = true;
-            renderStatus(`
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="9" stroke-dasharray="40 20"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/></circle></svg>
-                <span>Шукаємо запис...</span>
-            `);
+        function renderDashboard(data) {
+            const objects = (data && data.objects) || [];
+            const pending = (data && data.pending) || [];
+            // Personalize the requisites card only when there is a single object.
+            if (objects.length === 1) updatePaymentPurpose(objects[0].payment_purpose);
 
-            try {
-                const rows = await loadSheet();
-                const match = rows.find(r => nameMatches(query, r.name));
-                if (match) renderResult(match);
-                else renderNotFound();
-            } catch (err) {
-                console.error(err);
-                renderStatus(`
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"></path></svg>
-                    <span>Не вдалося завантажити дані. Спробуйте пізніше.</span>
-                `, true);
-            } finally {
-                searchSubmit.disabled = false;
-                bringSearchIntoView();
+            requestForm.hidden = true;
+            requestHint.hidden = true;
+            verifyForm.hidden = true;
+            verifyHint.hidden = true;
+            restartBtn.hidden = true;
+
+            let html = '<div class="search-result">';
+            if (objects.length) {
+                html += objects.map(objectCard).join('');
+            } else {
+                html += `<div class="search-status">${ICON_INFO}<span>За вашим номером об'єктів не знайдено. Якщо ви орендар — надішліть запит нижче, і ми прив'яжемо ваш об'єкт.</span></div>`;
             }
-        });
+            pending.forEach(p => {
+                const label = [p.entered_name, p.entered_address].filter(Boolean).join(', ');
+                html += `<div class="search-status">${ICON_INFO}<span>Запит на прив'язку «${escapeHtml(label)}» на розгляді.</span></div>`;
+            });
+            html += `<details class="claim-block"${objects.length ? '' : ' open'}>
+                        <summary>${objects.length ? 'Додати ще один об\'єкт' : 'Надіслати запит на прив\'язку'}</summary>
+                        ${claimForm()}
+                        <p class="search-hint" id="claim-hint" hidden></p>
+                     </details>`;
+            html += '<button type="button" class="link-btn" id="logout-btn">Вийти</button>';
+            html += '</div>';
+            searchOutput.innerHTML = html;
+
+            document.getElementById('logout-btn').addEventListener('click', doLogout);
+            document.getElementById('claim-form').addEventListener('submit', submitClaim);
+            bringSearchIntoView();
+        }
+
+        async function submitClaim(e) {
+            e.preventDefault();
+            const name = document.getElementById('claim-name').value.trim();
+            const address = document.getElementById('claim-address').value.trim();
+            const hint = document.getElementById('claim-hint');
+            const btn = document.getElementById('claim-submit');
+            if (!name) return;
+            btn.disabled = true;
+            try {
+                const { data } = await postJson(API.claim, { name, address });
+                if (data.status === 'submitted') {
+                    hint.textContent = 'Запит надіслано. Ми прив\'яжемо ваш об\'єкт після перевірки.';
+                } else if (data.status === 'already_linked') {
+                    hint.textContent = 'Цей об\'єкт уже прив\'язано до вашого акаунта.';
+                } else {
+                    hint.textContent = 'Не вдалося надіслати запит. Спробуйте пізніше.';
+                }
+            } catch (err) {
+                hint.textContent = "Помилка з'єднання. Спробуйте пізніше.";
+            } finally {
+                hint.hidden = false;
+                btn.disabled = false;
+            }
+        }
+
+        async function doLogout() {
+            try { await postJson(API.logout, {}); } catch (e) {}
+            activeChallenge = null;
+            paymentText.textContent = PAYMENT_EXAMPLE;
+            paymentLabel.textContent = 'Приклад';
+            paymentBox.classList.remove('personalized');
+            searchInput.value = '';
+            clearStatus();
+            showStep('request');
+            searchInput.focus();
+        }
+
+        // ----- Restore an existing session on load -----
+        (async () => {
+            try {
+                const resp = await fetch(API.me, { credentials: 'same-origin', cache: 'no-store' });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.status === 'ok') renderDashboard(data.data);
+                }
+            } catch (e) { /* not logged in — stay on step 1 */ }
+        })();
 
         // Copy interactions
         function copyValue(btn) {
