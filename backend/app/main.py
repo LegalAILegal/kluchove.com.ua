@@ -115,7 +115,11 @@ def _resolve(text: str) -> Tenant | None:
     na = normalize_address(text).lower()
     if na:
         for cand in repo.all():
-            if na in normalize_address(cand.address).lower():
+            ca = normalize_address(cand.address).lower()
+            # Tolerant either-way containment: the owner may type the address more
+            # cleanly than the messy sheet form (or vice-versa). This is the path
+            # for "ПІБ differs, but the address pins the row" — bind by address.
+            if ca and (na in ca or ca in na):
                 return cand
     return None
 

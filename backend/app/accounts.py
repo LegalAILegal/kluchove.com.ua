@@ -14,7 +14,8 @@ The `requests` tab doubles as the admin panel: a claim appears as a row with a
 fuzzy-matched suggestion filled in; the owner reviews it in the spreadsheet and
 sets status to `approved` (optionally overriding `resolved_key`). On the next
 `/me` the backend materializes the approved claim by writing the verified phone
-into the matched row's column N, then flips the request row to `done`.
+into the matched row's column N, then flips the request row to `done`. A claim
+that can't be resolved yet stays `approved` and is retried on later `/me` calls.
 
 Volumes are tiny (a handful of registrations), so reads go straight to the API
 without caching — keeping account state correct immediately after a write.
@@ -143,7 +144,7 @@ class AccountsRepo:
         return out
 
     def materialize_approved(self, phone: str, bind) -> int:
-        """Bind this phone's owner-approved claims, then flip them to done.
+        """Bind this phone's owner-approved claims; flip to `done` only on success.
 
         `bind(text)` takes an owner-approved value — either a normalized
         object_key OR free text like an address the owner typed into
@@ -163,7 +164,12 @@ class AccountsRepo:
             text = resolved or (r[5] if len(r) >= 6 else "").strip()
             if text and bind(text):
                 created += 1
-            self._set_status(row_number, ST_DONE)
+                self._set_status(row_number, ST_DONE)
+            # If the bind failed (key not resolvable yet — e.g. the debtor row has
+            # no ПІБ, or the address was mistyped), DO NOT flip to `done`. Leaving
+            # it `approved` means the next /me retries and it self-heals the moment
+            # the owner fixes the row; the tenant meanwhile still sees "на розгляді"
+            # instead of being silently dropped back to the empty claim form.
         return created
 
 
