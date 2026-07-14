@@ -17,4 +17,4 @@ jobs:
           script: |
             cd /opt/kluchove.com.ua
             git pull origin main
-            docker compose up -d --force-recreate nginx
+            docker compose up -d --build --force-recreate backend nginx

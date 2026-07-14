@@ -99,12 +99,17 @@ class SheetRepo:
                 return str(row[i]).strip() if i < len(row) and row[i] is not None else ""
 
             name = cell(COL_NAME)
-            if not name:
+            address = cell(COL_ADDRESS)
+            # An object is keyed by name+address. Keep a row if it has EITHER of
+            # them: a debtor may be entered by address alone (ПІБ not filled yet)
+            # and must still be loadable so it can be bound by address. Only a row
+            # with neither a name nor an address is noise — skip that.
+            if not name and not address:
                 continue
             tenants.append(
                 Tenant(
                     name=name,
-                    address=cell(COL_ADDRESS),
+                    address=address,
                     debt=cell(COL_DEBT),
                     phone=cell(COL_PHONE),
                     row=first_row + offset,
