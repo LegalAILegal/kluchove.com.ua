@@ -91,14 +91,31 @@ def _object_payload(t: Tenant) -> dict:
 
 
 def _suggest(name: str, address: str) -> Tenant | None:
-    """Best fuzzy match for a manual claim (mirrors the front-end matching)."""
-    candidates = [t for t in repo.all() if name_matches(name, t.name)]
+    """Best fuzzy match for a manual claim (mirrors the front-end matching).
+
+    Prefer a name match (narrowed by address when given). If the entered name
+    matches nothing — the common case when the tenant spells their name
+    differently than our sheet — fall back to pinning the row by ADDRESS alone,
+    so the owner still gets a pre-filled suggestion to approve.
+    """
     na = normalize_address(address).lower() if address else ""
-    if na and candidates:
-        exact = [t for t in candidates if normalize_address(t.address).lower() == na]
-        partial = [t for t in candidates if na in normalize_address(t.address).lower()]
-        candidates = exact or partial or candidates
-    return candidates[0] if candidates else None
+    candidates = [t for t in repo.all() if name_matches(name, t.name)]
+    if candidates:
+        if na:
+            exact = [t for t in candidates if normalize_address(t.address).lower() == na]
+            partial = [t for t in candidates if na in normalize_address(t.address).lower()]
+            candidates = exact or partial or candidates
+        return candidates[0]
+    # No name match: pin by address (exact first, then two-way containment).
+    if na:
+        exact = [t for t in repo.all() if normalize_address(t.address).lower() == na]
+        if exact:
+            return exact[0]
+        for t in repo.all():
+            ca = normalize_address(t.address).lower()
+            if ca and (na in ca or ca in na):
+                return t
+    return None
 
 
 def _resolve(text: str) -> Tenant | None:
